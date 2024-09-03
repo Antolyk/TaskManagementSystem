@@ -3,11 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementSystem", "TaskManagementSystem\TaskManagementSystem.csproj", "{D03DF890-3783-4038-823E-3CD73207C4D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem", "TaskManagementSystem\TaskManagementSystem.csproj", "{D03DF890-3783-4038-823E-3CD73207C4D5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{32153636-9CA7-417F-9EB2-6E98C1E4BC8A} = {32153636-9CA7-417F-9EB2-6E98C1E4BC8A}
+		{CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8} = {CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementSystem.Data", "TaskManagementSystem.Data\TaskManagementSystem.Data.csproj", "{CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem.Data", "TaskManagementSystem.Data\TaskManagementSystem.Data.csproj", "{CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementSystem.Service", "TaskManagementSystem.Service\TaskManagementSystem.Service.csproj", "{32153636-9CA7-417F-9EB2-6E98C1E4BC8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem.Service", "TaskManagementSystem.Service\TaskManagementSystem.Service.csproj", "{32153636-9CA7-417F-9EB2-6E98C1E4BC8A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8} = {CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
