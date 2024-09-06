@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Service.Interfaces;
+using TaskManagementSystem.Service.Models;
 
 namespace TaskManagementSystem.Controllers
 {
@@ -18,38 +18,29 @@ namespace TaskManagementSystem.Controllers
             _authService = authService;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        [HttpPost("users/register")]
+        public async Task<ActionResult<UserServiceModel>> Register(UserDto request)
         {
-            // Перевірка чи користувач з таким ім'ям або емейлом вже існує
-           var existingUser = await _userService.GetByUsernameOrEmailAsync(request);
-           if (existingUser != null)
-           {
-               return BadRequest("User with the same username or email already exists.");
-           }
-
-            // Реєстрація нового користувача
-            var user = await _userService.RegisterUserAsync(request);
+            UserServiceModel existingUser = _userService.GetByUsernameOrEmail(request);
+            if (existingUser != null)
+                return BadRequest("User with the same username or email already exists.");
+            
+            UserServiceModel user = await _userService.RegisterUserAsync(request);
 
             return Ok(user);
         }
-        [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(UserDto request)
+
+        [HttpPost("users/login")]
+        public ActionResult<string> Login(UserDto request)
         {
-            // Перевірка чи користувач з таким ім'ям або емейлом вже існує
-            var existingUser = await _userService.GetByUsernameOrEmailAsync(request);
+            UserServiceModel existingUser = _userService.GetByUsernameOrEmail(request);
             if (existingUser == null)
-            {
                 return BadRequest("User with that username/email not found.");
-            }
-
-            //
-            if (!_userService.CheckUserPassword(request).Result)
-            {
+            
+            if (!_userService.CheckUserPassword(request))
                 return BadRequest("Wrong password!");
-            }
-
-            // Створення JWT токену
+            
+            // JWT token for user
             var token = _authService.CreateToken(existingUser);
 
             return Ok(token);

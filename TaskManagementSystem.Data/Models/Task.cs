@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TaskManagementSystem.Data.Models
 {
@@ -15,13 +11,14 @@ namespace TaskManagementSystem.Data.Models
         public string Title { get; set; }
         public string? Description { get; set; }
         public DateTime? DueDate { get; set; }
-        public TaskStatus Status { get; set; } = TaskStatus.Pending;
-        public TaskPriority Priority { get; set; } = TaskPriority.Medium;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public TaskStatus Status { get; set; }
+        public TaskPriority Priority { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
     }
 
     public enum TaskStatus

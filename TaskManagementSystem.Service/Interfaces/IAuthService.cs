@@ -1,9 +1,9 @@
-﻿using TaskManagementSystem.Data.Models;
+﻿using TaskManagementSystem.Service.Models;
 
 namespace TaskManagementSystem.Service.Interfaces
 {
     public interface IAuthService
     {
-        string CreateToken(User user);
+        string CreateToken(UserServiceModel user);
     }
 }

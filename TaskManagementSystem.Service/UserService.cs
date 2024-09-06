@@ -1,61 +1,125 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 using TaskManagementSystem.Data.Models;
-using TaskManagementSystem.Data.Repositories;
 using TaskManagementSystem.Data.Repositories.Contract;
 using TaskManagementSystem.Service.Interfaces;
+using TaskManagementSystem.Service.Models;
 
 namespace TaskManagementSystem.Service
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
+            _logger = logger;
         }
 
-        public async Task<User> RegisterUserAsync(UserDto request)
+
+        public async Task<UserServiceModel> RegisterUserAsync(UserDto request)
         {
-            string passwordhash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-            var user = new User()
+            _logger.LogInformation("Registering user with username: {Username}", request.Username);
+
+            try
             {
-                Id = Guid.NewGuid(),
-                Username = request.Username,
-                Email = request.Email,
-                PasswordHash = passwordhash,
-            };
+                // Hash user's password
+                string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            await _userRepository.AddAsync(user);
-            await _userRepository.SaveChangesAsync();
+                // Create an entity
+                User user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.Username,
+                    Email = request.Email,
+                    PasswordHash = passwordHash,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
 
-            return user;
+                await _userRepository.AddAsync(user);
+                await _userRepository.SaveChangesAsync();
+
+                _logger.LogInformation("User {Username} registered successfully.", request.Username);
+
+                return new UserServiceModel
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while registering user {Username}.", request.Username);
+                throw;
+            }
         }
 
-        public async Task<User> GetByUsernameOrEmailAsync(UserDto request)
+
+        public UserServiceModel GetByUsernameOrEmail(UserDto request)
         {
-            return await _userRepository.GetByUsernameOrEmailAsync(request.Username, request.Email);
+            _logger.LogInformation("Returning user model with username: {Username} and Email: {Email}", request.Username, request.Email);
+
+            try
+            {
+                User user = _userRepository.GetByUsernameOrEmail(request.Username, request.Email);
+                if (user == null)
+                {
+                    _logger.LogError("User {Username} is null.", request.Username);
+                    return null;
+                }
+
+                // Create a response model
+                UserServiceModel userModel = new UserServiceModel
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    PasswordHash = user.PasswordHash,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt
+                };
+
+                _logger.LogInformation("Returning user model with username: {Username} and Email: {Email} was succesfull", request.Username, request.Email);
+                return userModel;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while finding and returning user {Username}.", request.Username);
+                throw;
+            }
         }
 
-        public async Task<bool> CheckUserPassword(UserDto request)
+        public bool CheckUserPassword(UserDto request)
         {
-            var user = await GetByUsernameOrEmailAsync(request);
-            return BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-        }
+            _logger.LogInformation("Checking and verifying password {Password} with username: {Username}", request.Password, request.Username);
 
-        public Task<User> AuthenticateUser(string usernameOrEmail, string password)
-        {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                UserServiceModel user = GetByUsernameOrEmail(request);
 
-        public Task<User> GetUserById(Guid userId)
-        {
-            throw new NotImplementedException();
-        }
+                if (user == null)
+                {
+                    _logger.LogError("User {Username} is null.", request.Username);
+                    return false;
+                }
 
+                // Verify password
+                bool checkResult = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+                _logger.LogInformation("User {Username} was succesfully checked", request.Username);
+                return checkResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while verifying user {Username}.", request.Username);
+                throw;
+            }
+        }
     }
 }

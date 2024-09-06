@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using TaskManagementSystem.Data;
-using TaskManagementSystem.Data.Repositories.Contract;
-using TaskManagementSystem.Data.Repositories;
-using TaskManagementSystem.Service.Interfaces;
-using TaskManagementSystem.Service;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
+using TaskManagementSystem.Data.Repositories;
+using TaskManagementSystem.Data.Repositories.Contract;
+using TaskManagementSystem.Service;
+using TaskManagementSystem.Service.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,17 +15,43 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{   //Add authorization by token
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
 
-builder.Services.AddAuthentication().AddJwtBearer();
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+//Add JWT authentication
+builder.Services.AddAuthentication().AddJwtBearer(options =>
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                builder.Configuration.GetSection("Jwt:Token").Value!))
+    }
+);
+
+//Add DB context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 
+//DI for services and repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddLogging();
 
 var app = builder.Build();
 

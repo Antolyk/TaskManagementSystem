@@ -1,15 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.IdentityModel.JsonWebTokens; //
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Service.Interfaces;
+using TaskManagementSystem.Service.Models;
 
 namespace TaskManagementSystem.Service
 {
@@ -21,7 +16,7 @@ namespace TaskManagementSystem.Service
             _configuration = configuration;
         }
 
-        public string CreateToken(User user)
+        public string CreateToken(UserServiceModel user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -37,8 +32,8 @@ namespace TaskManagementSystem.Service
             var token = new JwtSecurityToken(
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(1),
-                signingCredentials: creds 
-                );
+                signingCredentials: creds
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

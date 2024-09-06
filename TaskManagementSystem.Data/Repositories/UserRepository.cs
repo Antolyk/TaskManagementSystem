@@ -1,10 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManagementSystem.Data.Models;
+﻿using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Data.Repositories.Contract;
 
 namespace TaskManagementSystem.Data.Repositories
@@ -18,15 +12,14 @@ namespace TaskManagementSystem.Data.Repositories
             _context = context;
         }
 
-        public async Task<User> GetByIdAsync(Guid id)
+        public User GetById(string id)
         {
-            return await _context.Users.FindAsync(id);
+            return _context.Users.FirstOrDefault(x => x.Id.ToString() == id);
         }
 
-        public async Task<User> GetByUsernameOrEmailAsync(string username, string email)
+        public User GetByUsernameOrEmail(string username, string email)
         {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == username || u.Email == email);
+            return _context.Users.FirstOrDefault(u => u.Username == username || u.Email == email);
         }
 
         public async Task AddAsync(User user)
@@ -39,5 +32,4 @@ namespace TaskManagementSystem.Data.Repositories
             await _context.SaveChangesAsync();
         }
     }
-
 }

@@ -1,10 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Data.Repositories.Contract;
 
@@ -19,17 +13,15 @@ namespace TaskManagementSystem.Data.Repositories
             _context = context;
         }
 
-        public async Task<TaskItem> GetByIdAsync(Guid id)
+        public TaskItem GetById(string taskId)
         {
-            return await _context.Tasks.FindAsync(id);
+            return _context.Tasks.FirstOrDefault(i => i.Id.ToString() == taskId);
         }
 
-        public async Task<IEnumerable<TaskItem>> GetTasksForUserAsync(Guid userId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<TaskItem>> GetTasksForUserAsync(string userId)
         {
             return await _context.Tasks
-                .Where(t => t.UserId == userId)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
+                .Where(t => t.UserId.ToString() == userId)
                 .ToListAsync();
         }
 
@@ -40,12 +32,16 @@ namespace TaskManagementSystem.Data.Repositories
 
         public async Task UpdateAsync(TaskItem task)
         {
-            _context.Tasks.Update(task);
+            var existingTask = await _context.Tasks.FirstOrDefaultAsync(i => i.Id == task.Id);
+            if (task != null)
+                _context.Tasks.Update(task);
         }
 
-        public async Task DeleteAsync(TaskItem task)
+        public async Task DeleteAsync(string taskId)
         {
-            _context.Tasks.Remove(task);
+            var existingTask = await _context.Tasks.FirstOrDefaultAsync(i => i.Id.ToString() == taskId);
+            if (existingTask != null)
+                _context.Tasks.Remove(existingTask);
         }
 
         public async Task SaveChangesAsync()

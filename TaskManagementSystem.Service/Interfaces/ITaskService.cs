@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TaskManagementSystem.Data.Models;
+using TaskManagementSystem.Service.Models;
+
 
 namespace TaskManagementSystem.Service.Interfaces
 {
     public interface ITaskService
     {
-        Task<Task> CreateTask(Task task);
-        Task<Task> UpdateTask(Task task);
-        Task DeleteTask(Guid taskId);
-        Task<Task> GetTaskById(Guid taskId);
-        Task<IEnumerable<Task>> GetTasksByUserId(Guid userId);
+        TaskServiceModel GetTaskById(string taskId, string userId);
+        IEnumerable<TaskServiceModel> GetTasks(
+            int? status, DateTime? dueDate, int? priority,
+            string sortField, string sortOrder,
+            int pageNumber, int pageSize, string userId);
+        Task<TaskServiceModel> CreateTaskAsync(TaskDto request, string userId);
+        Task<TaskServiceModel> UpdateTaskAsync(string taskId, string userId, TaskDto request);
+        Task<string> DeleteTaskAsync(string taskId, string userId);
     }
 }
