@@ -131,6 +131,11 @@ namespace TaskManagementSystem.Service
         {
             _logger.LogInformation("Creating task for user: {UserId}", userId);
 
+            if (request.Title == null)
+            {
+                _logger.LogError("TaskDro for User {UserId} has not Title.", request.UserId);
+                return null;
+            }
             try
             {
                 // Create an entity

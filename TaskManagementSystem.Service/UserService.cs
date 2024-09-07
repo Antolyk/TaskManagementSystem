@@ -24,6 +24,13 @@ namespace TaskManagementSystem.Service
 
             try
             {
+                UserServiceModel existingUser = GetByUsernameOrEmail(request);
+                if (existingUser != null)
+                {
+                    _logger.LogError("User {Username} is existed already.", request.Username);
+                    return null;
+                }
+
                 // Hash user's password
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
@@ -59,7 +66,6 @@ namespace TaskManagementSystem.Service
                 throw;
             }
         }
-
 
         public UserServiceModel GetByUsernameOrEmail(UserDto request)
         {
