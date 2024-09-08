@@ -16,7 +16,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem.Servic
 		{CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8} = {CE9EE2D1-FF77-4FE5-9ADD-ABA03E1670E8}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementSystem.Tests", "TaskManagementSystem.Tests\TaskManagementSystem.Tests.csproj", "{783C2412-2A65-467E-A888-E2A2A3389156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManagementSystem.Tests", "TaskManagementSystem.Tests\TaskManagementSystem.Tests.csproj", "{783C2412-2A65-467E-A888-E2A2A3389156}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

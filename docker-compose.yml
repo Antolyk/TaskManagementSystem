@@ -1,0 +1,22 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: MyStrongPassword!!1
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TaskManagerDB;User=sa;Password=MyStrongPassword!!1;Trusted_Connection=false;TrustServerCertificate=true;
+      - Jwt__Token=MyVeryLongSuperPuperSecureAndRandomTokenHereForThisTaskManager!!!!!! 
+    depends_on:
+      - db

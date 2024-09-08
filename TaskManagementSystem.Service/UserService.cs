@@ -40,7 +40,6 @@ namespace TaskManagementSystem.Service
                     Id = Guid.NewGuid(),
                     Username = request.Username,
                     Email = request.Email,
-                    PasswordHash = passwordHash,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -55,7 +54,6 @@ namespace TaskManagementSystem.Service
                     Id = user.Id,
                     Username = user.Username,
                     Email = user.Email,
-                    PasswordHash = user.PasswordHash,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt
                 };
@@ -86,7 +84,6 @@ namespace TaskManagementSystem.Service
                     Id = user.Id,
                     Username = user.Username,
                     Email = user.Email,
-                    PasswordHash = user.PasswordHash,
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt
                 };
