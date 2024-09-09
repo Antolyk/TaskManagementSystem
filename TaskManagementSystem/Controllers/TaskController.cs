@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Service.Interfaces;
 using TaskManagementSystem.Service.Models;
@@ -19,8 +20,12 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpPost("tasks")]
-        public async Task<ActionResult<TaskServiceModel>> CreateTask(TaskDto request, string userId)
+        public async Task<ActionResult<TaskServiceModel>> CreateTask(TaskDto request)
         {
+            var userId = User.FindFirst("Identifier")?.Value;
+            if (userId == null)
+                return Unauthorized();
+
             var task = await _taskService.CreateTaskAsync(request, userId);
             if (task == null)
                 return BadRequest("You can not add tasks to other users");
@@ -29,22 +34,29 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpGet("tasks/{id}")]
-        public ActionResult<TaskServiceModel> GetTaskById(string id, string userId)
+        public ActionResult<TaskServiceModel> GetTaskById(string id)
         {
+            var userId = User.FindFirst("Identifier")?.Value;
+            if (userId == null)
+                return Unauthorized();
+
             var task = _taskService.GetTaskById(id, userId);
             if (task == null)
-                return BadRequest("There is an error! Something went wrong.");
+                return NotFound();
 
             return task;
         }
 
         [HttpGet("tasks")]
         public ActionResult<IEnumerable<TaskServiceModel>> GetAllTasks(
-            string userId, //User
             int? status = null, DateTime? dueDate = null, int? priority = null, //Filter
             string sortField = "DueDate", string sortOrder = "ASC", //Sort
             int pageNumber = 1, int pageSize = 10) //Pagination
         {
+            var userId = User.FindFirst("Identifier")?.Value;
+            if (userId == null)
+                return Unauthorized();
+
             var tasks = _taskService.GetTasks(status, dueDate, priority, sortField, sortOrder, pageNumber, pageSize, userId);
             if (tasks == null)
                 return BadRequest("There is no tasks");
@@ -53,8 +65,12 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpPut("tasks/{id}")]
-        public async Task<ActionResult<TaskServiceModel>> UpdateTask(string id, string userId, TaskDto request)
+        public async Task<ActionResult<TaskServiceModel>> UpdateTask(string id, TaskDto request)
         {
+            var userId = User.FindFirst("Identifier")?.Value;
+            if (userId == null)
+                return Unauthorized();
+
             var task = await _taskService.UpdateTaskAsync(id, userId, request);
             if (task == null)
                 return BadRequest("There is an error! Something went wrong.");
@@ -62,8 +78,12 @@ namespace TaskManagementSystem.Controllers
         }
 
         [HttpDelete("tasks/{id}")]
-        public async Task<ActionResult<string>> DeleteTaskById(string id, string userId)
+        public async Task<ActionResult<string>> DeleteTaskById(string id)
         {
+            var userId = User.FindFirst("Identifier")?.Value;
+            if (userId == null)
+                return Unauthorized();
+
             return await _taskService.DeleteTaskAsync(id, userId);
         }
     }

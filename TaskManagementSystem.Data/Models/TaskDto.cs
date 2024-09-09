@@ -8,6 +8,6 @@
         public TaskStatus Status { get; set; }
         public TaskPriority Priority { get; set; }
 
-        public Guid UserId { get; set; }
+        //public Guid UserId { get; set; }
     }
 }

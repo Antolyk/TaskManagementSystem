@@ -29,7 +29,7 @@ namespace TaskManagementSystem.Service
                 TaskItem task = _taskRepository.GetById(taskId);
 
                 // Check whether the task belongs to the user
-                if (task == null || userId.ToLower() != task.UserId.ToString())
+                if (task == null || task.UserId.ToString() != userId)
                     return null;
 
                 // Create a response model
@@ -133,12 +133,12 @@ namespace TaskManagementSystem.Service
 
             if (request.Title == null)
             {
-                _logger.LogError("TaskDro for User {UserId} has not Title.", request.UserId);
+                _logger.LogError("TaskDto for User {UserId} has not Title.", userId);
                 return null;
             }
             if (!_userService.CheckUserById(userId))
             {
-                _logger.LogError("TaskDro for User {UserId} cant be created because User did not exist.", request.UserId);
+                _logger.LogError("TaskDto for User {UserId} cant be created because User did not exist.", userId);
                 return null;
             }
             try
@@ -152,7 +152,7 @@ namespace TaskManagementSystem.Service
                     DueDate = request.DueDate,
                     Status = request.Status,
                     Priority = request.Priority,
-                    UserId = request.UserId,
+                    UserId = Guid.Parse(userId),
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
                 };
@@ -192,7 +192,7 @@ namespace TaskManagementSystem.Service
             {
                 TaskItem task = _taskRepository.GetById(taskId);
 
-                if (task != null && userId.ToLower() == task.UserId.ToString())
+                if (task != null && task.UserId.ToString() == userId)
                 {
                     // Update task with data that has value in request
                     if (request.Title != null) task.Title = request.Title;
@@ -241,7 +241,7 @@ namespace TaskManagementSystem.Service
                 TaskItem task = _taskRepository.GetById(taskId);
 
                 // Check whether the task belongs to the user
-                if (task != null && userId.ToLower() == task.UserId.ToString())
+                if (task != null && task.UserId.ToString() == userId)
                 {
                     await _taskRepository.DeleteAsync(taskId);
                     await _taskRepository.SaveChangesAsync();

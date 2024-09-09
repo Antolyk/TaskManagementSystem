@@ -28,19 +28,20 @@ namespace TaskManagementSystem.Tests.Services
         public async Task CreateTaskAsync_ShouldCreateTaskSuccessfully()
         {
             // Arrange
+            var userId = Guid.NewGuid().ToString();
+
             var taskDto = new TaskDto
             {
                 Title = "New Task",
                 Description = "Task description",
                 DueDate = DateTime.UtcNow.AddDays(1),
                 Priority = TaskPriority.Low,
-                Status = TaskStatus.Pending,
-                UserId = Guid.NewGuid()
+                Status = TaskStatus.Pending
             };
             _userServiceMock.Setup(x => x.CheckUserById(It.IsAny<string>())).Returns(true);
 
             // Act
-            var result = await _taskService.CreateTaskAsync(taskDto, taskDto.UserId.ToString());
+            var result = await _taskService.CreateTaskAsync(taskDto, userId.ToString());
 
             // Assert
             _taskRepositoryMock.Verify(x => x.AddAsync(It.IsAny<TaskItem>()), Times.Once);
@@ -52,18 +53,19 @@ namespace TaskManagementSystem.Tests.Services
         public async Task CreateTaskAsync_ShouldFail_WhenNoTitle()
         {
             // Arrange
+            var userId = Guid.NewGuid().ToString();
+
             var taskDto = new TaskDto
             {
                 Title = null,
                 Description = "Task description",
                 DueDate = DateTime.UtcNow.AddDays(1),
                 Priority = TaskPriority.Low,
-                Status = TaskStatus.Pending,
-                UserId = Guid.NewGuid()
+                Status = TaskStatus.Pending
             };
 
             // Act
-            var result = await _taskService.CreateTaskAsync(taskDto, taskDto.UserId.ToString());
+            var result = await _taskService.CreateTaskAsync(taskDto, userId.ToString());
 
             // Assert
             Assert.Null(result);
@@ -234,7 +236,6 @@ namespace TaskManagementSystem.Tests.Services
                 DueDate = DateTime.UtcNow.AddDays(2),
                 Priority = TaskPriority.High,
                 Status = TaskStatus.Completed,
-                UserId = Guid.Parse(userId)
             };
 
             _taskRepositoryMock.Setup(x => x.GetById(taskId)).Returns(taskItem);

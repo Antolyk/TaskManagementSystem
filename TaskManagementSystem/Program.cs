@@ -35,7 +35,9 @@ builder.Services.AddAuthentication().AddJwtBearer(options =>
         ValidateAudience = false,
         ValidateIssuer = false,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                builder.Configuration.GetSection("Jwt:Token").Value!))
+                builder.Configuration.GetSection("Jwt:Token").Value!)),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     }
 );
 
