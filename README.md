@@ -23,10 +23,10 @@ This project is a simple task management application with user authentication. I
   ```json
   {
     "Jwt": {
-      "Token": "MyVeryLongSuperPuperSecureAndRandomTokenHereForThisTaskManager!!!!!!"
+      "Token": "YourSecretKey"
     },
     "ConnectionStrings": {
-      "DefaultConnection": "Server=.\\SQLExpress;Database=TaskManagerDB;Trusted_Connection=true;TrustServerCertificate=true;"
+      "DefaultConnection": "Server=.\\SQLExpress;Database=YourDBName;Trusted_Connection=true;TrustServerCertificate=true;"
     }
   }
   ```
