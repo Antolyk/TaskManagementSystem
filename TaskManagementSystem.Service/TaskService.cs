@@ -136,6 +136,11 @@ namespace TaskManagementSystem.Service
                 _logger.LogError("TaskDro for User {UserId} has not Title.", request.UserId);
                 return null;
             }
+            if (!_userService.CheckUserById(userId))
+            {
+                _logger.LogError("TaskDro for User {UserId} cant be created because User did not exist.", request.UserId);
+                return null;
+            }
             try
             {
                 // Create an entity

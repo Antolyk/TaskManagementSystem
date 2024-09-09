@@ -14,7 +14,6 @@ RUN dotnet restore "TaskManagementSystem/TaskManagementSystem.csproj"
 COPY . .
 WORKDIR "/src/TaskManagementSystem"
 RUN apt-get update && apt-get install -y libgssapi-krb5-2
-ENV Jwt__Token=MyVeryLongSuperPuperSecureAndRandomTokenHereForThisTaskManager!!!!!!
 RUN dotnet build "TaskManagementSystem.csproj" -c Release -o /app/build
 
 # Публікація проєкту

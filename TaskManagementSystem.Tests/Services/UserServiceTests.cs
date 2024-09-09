@@ -96,7 +96,6 @@ namespace TaskManagementSystem.Tests.Services
             Assert.NotNull(result);
             Assert.Equal(user.Username, result.Username);
             Assert.Equal(user.Email, result.Email);
-            Assert.Equal(user.PasswordHash, result.PasswordHash);
             _userRepositoryMock.Verify(x => x.GetByUsernameOrEmail(userDto.Username, userDto.Email), Times.Once);
         }
 

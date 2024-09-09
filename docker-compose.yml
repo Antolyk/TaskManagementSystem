@@ -2,7 +2,7 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      SA_PASSWORD: MyStrongPassword!!1
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
@@ -15,8 +15,8 @@ services:
       - "5000:8080"
       - "5001:8081"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=TaskManagerDB;User=sa;Password=MyStrongPassword!!1;Trusted_Connection=false;TrustServerCertificate=true;
-      - Jwt__Token=MyVeryLongSuperPuperSecureAndRandomTokenHereForThisTaskManager!!!!!! 
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__DefaultConnection=${ConnectionStrings__DefaultConnection}
+      - Jwt__Token=${Jwt__Token}
     depends_on:
       - db

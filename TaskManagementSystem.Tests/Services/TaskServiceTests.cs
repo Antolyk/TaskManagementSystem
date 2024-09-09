@@ -37,6 +37,7 @@ namespace TaskManagementSystem.Tests.Services
                 Status = TaskStatus.Pending,
                 UserId = Guid.NewGuid()
             };
+            _userServiceMock.Setup(x => x.CheckUserById(It.IsAny<string>())).Returns(true);
 
             // Act
             var result = await _taskService.CreateTaskAsync(taskDto, taskDto.UserId.ToString());

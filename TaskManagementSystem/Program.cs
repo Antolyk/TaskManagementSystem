@@ -60,14 +60,13 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     try
     {
-        // Застосовує всі міграції, створює базу даних, якщо її немає
+        // Applies all migrations, creates a database if it does not exist
         dbContext.Database.Migrate();
     }
     catch (Exception ex)
     {
-        // Логування помилок
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Помилка під час міграції бази даних.");
+        logger.LogError(ex, "Error during database migration.");
     }
 }
 

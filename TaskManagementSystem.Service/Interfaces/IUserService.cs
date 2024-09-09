@@ -9,5 +9,6 @@ namespace TaskManagementSystem.Service.Interfaces
         Task<UserServiceModel> RegisterUserAsync(UserDto request);
         UserServiceModel GetByUsernameOrEmail(UserDto request);
         bool CheckUserPassword(UserDto request);
+        bool CheckUserById(string userId);
     }
 }

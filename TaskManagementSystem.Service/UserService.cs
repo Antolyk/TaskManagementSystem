@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Azure.Core;
+using Microsoft.Extensions.Logging;
 using TaskManagementSystem.Data.Models;
 using TaskManagementSystem.Data.Repositories.Contract;
 using TaskManagementSystem.Service.Interfaces;
@@ -40,6 +41,7 @@ namespace TaskManagementSystem.Service
                     Id = Guid.NewGuid(),
                     Username = request.Username,
                     Email = request.Email,
+                    PasswordHash = passwordHash,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -104,7 +106,7 @@ namespace TaskManagementSystem.Service
 
             try
             {
-                UserServiceModel user = GetByUsernameOrEmail(request);
+                User user = _userRepository.GetByUsernameOrEmail(request.Username, request.Email);
 
                 if (user == null)
                 {
@@ -115,12 +117,35 @@ namespace TaskManagementSystem.Service
                 // Verify password
                 bool checkResult = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
-                _logger.LogInformation("User {Username} was succesfully checked", request.Username);
+                _logger.LogInformation("User {Username} was succesfully checked. The result is {checkResult}", request.Username, checkResult);
                 return checkResult;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while verifying user {Username}.", request.Username);
+                throw;
+            }
+        }
+
+        public bool CheckUserById(string userId)
+        {
+            _logger.LogInformation("Checking if user with Id: {userId} exist", userId);
+            try
+            {
+                var user = _userRepository.GetById(userId);
+
+                if (user == null)
+                {
+                    _logger.LogError("User {userId} is null.", userId);
+                    return false;
+                }
+
+                _logger.LogInformation("User {userId} was succesfully checked", userId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while checking user {userId}.", userId);
                 throw;
             }
         }
