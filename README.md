@@ -14,7 +14,7 @@ This project is a simple task management application with user authentication. I
 
 1. Clone the repository:
    ```bash
-   git clone <Your_Repository_URL>
+   git clone <Repository_URL>
    cd <Project_Name>
 2. Install dependencies:
    ```bash
